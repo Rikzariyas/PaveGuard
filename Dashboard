@@ -1,0 +1,119 @@
+<?php
+include('header.php');
+include('connection.php');
+
+$sel =mysqli_query($con,"select * from user_tbl where id='$_SESSION[uid]'");
+$row=mysqli_fetch_array($sel);
+?>
+
+<meta http-equiv="refresh" content="3">
+<!-- Welcome Section -->
+<section class="section welcome-section">
+    <div class="welcome-card">
+        <h2>
+            👋 Welcome, 
+            <?php echo $row['name']; ?>
+        </h2>
+        <p>
+            Upload road images, monitor live sensors, and help improve road safety.
+        </p>
+    </div>
+</section>
+
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Quick Actions -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">Quick Actions</h2>
+            </div>
+            <div class="quick-actions">
+                <a href="upload.php?uid=<?php echo $_SESSION['uid']; ?>" style="text-decoration: none;">
+					<div class="action-card">
+						<div class="action-icon blue">
+							<svg class="icon" viewBox="0 0 24 24">
+								<path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+								<circle cx="12" cy="13" r="4"></circle>
+							</svg>
+						</div>
+						<div class="action-label">Upload Image</div>
+					</div>
+				</a>
+				<a href="map.php?uid=<?php echo $_SESSION['uid']; ?>" style="text-decoration: none;">
+					<div class="action-card" >
+						<div class="action-icon green">
+							<svg class="icon" viewBox="0 0 24 24">
+								<path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+								<circle cx="12" cy="10" r="3"></circle>
+							</svg>
+						</div>
+						<div class="action-label">View Map</div>
+					</div>
+				</a>
+				<a href="reports.php?uid=<?php echo $_SESSION['uid']; ?>" style="text-decoration: none;">
+					<div class="action-card">
+						<div class="action-icon orange">
+							<svg class="icon" viewBox="0 0 24 24">
+								<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+								<polyline points="14 2 14 8 20 8"></polyline>
+							</svg>
+						</div>
+						<div class="action-label">View Reports</div>
+					</div>
+				</a>
+				<a href="history.php?uid=<?php echo $_SESSION['uid']; ?>" style="text-decoration: none;">
+					<div class="action-card" onclick="handleAction('sensor')">
+						<div class="action-icon purple">
+							<svg class="icon" viewBox="0 0 24 24">
+								<polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+							</svg>
+						</div>
+						<div class="action-label">Live Sensors</div>
+					</div>
+				</a>
+            </div>
+        </section>
+
+        <?php
+        $sql=mysqli_query($con,"select * from road_alerts order by created_at desc limit 1");
+        $data=mysqli_fetch_array($sql);
+        ?>
+        <!-- IoT Sensor Data -->
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">Live Sensor</h2>
+            </div>
+            <div class="sensor-card">
+                <div class="sensor-content">
+                    <div class="sensor-header">
+                        <div class="sensor-title">Ultrasonic Depth Sensor</div>
+                        <div class="buzzer-status">⚠️ Alert</div>
+                    </div>
+                    <div class="sensor-reading">
+                        <div class="depth-value"><?php echo $data['distance_cm']; ?></div>
+                        <div class="depth-unit">CENTIMETERS</div>
+                    </div>
+                    <div class="threshold-info">
+                        <span>Safety Threshold</span>
+                        <span>15.0 cm</span>
+                    </div>
+                    <?php if($data['distance_cm'] > 20) { ?>
+                    <div class="alert-banner">
+                        <svg class="icon-sm" viewBox="0 0 24 24">
+                            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+                            <line x1="12" y1="9" x2="12" y2="13"></line>
+                            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                        </svg>
+                        <span>Depth exceeds safety threshold!</span>
+                    </div>
+                    <?php }?>
+                </div>
+            </div>
+        </section>
+
+   </div>
+
+<?php
+include('footer.php');
+?>
