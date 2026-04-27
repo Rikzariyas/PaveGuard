@@ -1,0 +1,103 @@
+<?php
+session_start();
+include('header.php');
+include('connection.php');
+
+
+$uid = $_SESSION['uid'];
+
+/* ==========================
+   FETCH USER REPORTS
+   ========================== */
+$query = "
+SELECT 
+    ru.id AS upload_id,
+    ru.road_image,
+    ru.area_name,
+    ru.street_name,
+    ru.upload_time,
+    ar.defect_type,
+    ar.severity,
+    ar.confidence,
+    ar.analyzed_at
+FROM road_uploads ru
+JOIN analysis_results ar ON ru.id = ar.upload_id
+WHERE ru.user_id = '$uid'
+ORDER BY ru.upload_time DESC
+";
+
+$result = mysqli_query($con, $query);
+?>
+
+<!-- Main Content -->
+<div class="container">
+
+  <h2 class="page-title">My Road Reports</h2>
+
+  <?php if (mysqli_num_rows($result) > 0) { ?>
+
+    <div class="reports-grid">
+
+      <?php while ($row = mysqli_fetch_assoc($result)) { ?>
+
+        <div class="report-card">
+
+          <!-- Road Image -->
+          <div class="report-image">
+            <img src="<?php echo $row['road_image']; ?>" alt="Road Image">
+          </div>
+
+          <!-- Report Details -->
+          <div class="report-content">
+
+            <div class="report-row">
+              <span class="label">Defect</span>
+              <span class="value"><?php echo $row['defect_type']; ?></span>
+            </div>
+
+            <div class="report-row">
+              <span class="label">Severity</span>
+              <span class="value severity <?php echo strtolower($row['severity']); ?>">
+                <?php echo $row['severity']; ?>
+              </span>
+            </div>
+
+            <div class="report-row">
+              <span class="label">Confidence</span>
+              <span class="value">
+                <?php echo round($row['confidence'] * 100); ?>%
+              </span>
+            </div>
+
+            <div class="report-row">
+              <span class="label">Location</span>
+              <span class="value">
+                <?php echo $row['area_name']; ?>, <?php echo $row['street_name']; ?>
+              </span>
+            </div>
+
+            <div class="report-row small">
+              Uploaded: <?php echo $row['upload_time']; ?>
+            </div>
+
+            <div class="report-row small">
+              Analyzed: <?php echo $row['analyzed_at']; ?>
+            </div>
+
+          </div>
+
+        </div>
+
+      <?php } ?>
+
+    </div>
+
+  <?php } else { ?>
+
+    <p style="text-align:center;">No reports uploaded yet.</p>
+
+  <?php } ?>
+
+</div>
+
+<?php include('footer.php'); ?>
