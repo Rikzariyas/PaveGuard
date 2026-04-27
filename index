@@ -1,0 +1,183 @@
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Road Health Monitoring System</title>
+
+<style>
+body{
+    margin:0;
+    font-family: 'Segoe UI', sans-serif;
+    background: linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+.container{
+    width:80%;
+    max-width:380px;
+    background:#fff;
+    padding:30px 25px;
+    border-radius:18px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.25);
+    text-align:center;
+}
+
+.profile-header svg{
+    width:70px;
+    height:70px;
+    stroke:#2c5364;
+    fill:none;
+    stroke-width:1.5;
+}
+
+.profile-name{
+    margin:10px 0 5px;
+    font-size:22px;
+    color:#333;
+}
+
+.profile-email{
+    font-size:14px;
+    color:#777;
+    margin-bottom:20px;
+}
+
+.form-group{
+    text-align:left;
+    margin-bottom:15px;
+}
+
+.form-group label{
+    font-size:13px;
+    color:#555;
+}
+
+.form-group input{
+    width:100%;
+    padding:12px;
+    margin-top:5px;
+    border-radius:10px;
+    border:1px solid #ddd;
+    outline:none;
+    transition:0.3s;
+    font-size:14px;
+}
+
+.form-group input:focus{
+    border-color:#2c5364;
+    box-shadow:0 0 5px rgba(44,83,100,0.4);
+}
+
+.btn-primary{
+    width:100%;
+    padding:13px;
+    border:none;
+    border-radius:12px;
+    background:linear-gradient(135deg,#2c5364,#203a43);
+    color:white;
+    font-size:15px;
+    cursor:pointer;
+    transition:0.3s;
+    margin-top:10px;
+}
+
+.btn-primary:hover{
+    transform:scale(1.03);
+    box-shadow:0 5px 15px rgba(0,0,0,0.2);
+}
+
+.login-link{
+    margin-top:18px;
+    font-size:13px;
+}
+
+.login-link a{
+    text-decoration:none;
+    color:#2c5364;
+    font-weight:bold;
+}
+</style>
+</head>
+<body>
+
+<?php
+error_reporting(0);
+include('connection.php');
+
+if(isset($_POST['register']))
+{
+    $name     = $_POST['name'];
+    $email    = $_POST['email'];
+    $number   = $_POST['number'];
+    $password = $_POST['password'];
+
+    if($name != "" && $email != "" && $number != "" && $password != "")
+    {
+        $query = "INSERT INTO user_tbl (name, email, number, password)
+                  VALUES ('$name','$email','$number','$password')";
+
+        if(mysqli_query($con, $query))
+        {
+            echo "<script>window.location='login.php'</script>";
+        }
+        else
+        {
+            echo "<script>alert('Registration Failed');</script>";
+        }
+    }
+    else
+    {
+        echo "<script>alert('All fields are required');</script>";
+    }
+}
+?>
+
+<div class="container">
+
+    <div class="profile-header">
+        <svg viewBox="0 0 24 24">
+            <circle cx="12" cy="7" r="4"></circle>
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+        </svg>
+        <h2 class="profile-name">Create Account</h2>
+        <p class="profile-email">Register New User</p>
+    </div>
+
+    <form method="POST">
+        <div class="form-group">
+            <label>Full Name</label>
+            <input type="text" name="name" required>
+        </div>
+
+        <div class="form-group">
+            <label>Email</label>
+            <input type="email" name="email" required>
+        </div>
+
+        <div class="form-group">
+            <label>Phone</label>
+            <input type="text" name="number" required>
+        </div>
+
+        <div class="form-group">
+            <label>Password</label>
+            <input type="password" name="password" required>
+        </div>
+
+        <button type="submit" name="register" class="btn-primary">
+            Register
+        </button>
+
+        <div class="login-link">
+            Already have an account?
+            <a href="login.php">Login</a>
+        </div>
+    </form>
+
+</div>
+
+</body>
+</html>
