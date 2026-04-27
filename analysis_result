@@ -1,0 +1,65 @@
+<?php
+session_start();
+include('header.php');
+include('connection.php');
+
+$upload_id = $_GET['upload_id'];
+
+
+// Fetch analysis result
+$res = mysqli_query($con, "
+    SELECT * FROM analysis_results 
+    WHERE upload_id='$upload_id'
+");
+
+$row = mysqli_fetch_assoc($res);
+
+if (!$row) {
+    die("Analysis not available yet");
+}
+?>
+
+<!-- Main Content -->
+<div class="container">
+
+  <h2 class="page-title">Road Analysis Result</h2>
+
+  <div class="result-card">
+
+    <div class="result-row">
+      <span class="label">Detected Defect</span>
+      <span class="value defect"><?php echo $row['defect_type']; ?></span>
+    </div>
+
+    <div class="result-row">
+      <span class="label">Severity Level</span>
+      <span class="value severity <?php echo strtolower($row['severity']); ?>">
+        <?php echo $row['severity']; ?>
+      </span>
+    </div>
+
+    <div class="result-row">
+      <span class="label">Confidence</span>
+      <span class="value"><?php echo round($row['confidence'] * 100, 2); ?>%</span>
+    </div>
+
+    <div class="result-row">
+      <span class="label">Analyzed At</span>
+      <span class="value"><?php echo $row['analyzed_at']; ?></span>
+    </div>
+	
+	<div class="result-row">
+      <center><img src="analysis/result.jpg" style="width:50%; border-radius:10px;"></center>
+    </div>
+
+    <div class="action-buttons">
+      <a href="dashboard.php" class="btn-primary" style="text-decoration:none;">Go to Dashboard</a>
+    </div>
+
+  </div>
+
+</div>
+
+<?php
+include('footer.php');
+?>
